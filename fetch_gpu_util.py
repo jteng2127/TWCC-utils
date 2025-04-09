@@ -12,9 +12,8 @@ from utils import ensure_timedelta, ensure_utc_datetime
 
 
 class TWCCClient:
-    def __init__(self, api_key, project_id):
+    def __init__(self, api_key):
         self.base_url = "https://apigateway.twcc.ai/api/v3/k8s-D-twcc"
-        self.project_id = project_id
         self.session = requests.Session()
         self.session.headers.update(
             {
@@ -47,9 +46,13 @@ class TWCCClient:
         response.raise_for_status()
         return response.json()
 
-    def get_sites(self):
+    def get_project_id(self, project_name):
+        data = self.make_request("GET", "projects/", params={"name": project_name})
+        return data[0]["id"]
+
+    def get_sites(self, project_id):
         data = self.make_request(
-            "GET", "sites/", params={"project": self.project_id, "all_users": "1"}
+            "GET", "sites/", params={"project": project_id, "all_users": "1"}
         )
         return [
             {
@@ -127,11 +130,15 @@ class TWCCClient:
 if __name__ == "__main__":
     load_dotenv()
     api_key = os.getenv("TWCC_API_KEY")
-    project_id = os.getenv("TWCC_PROJECT_ID")
+    project_name = os.getenv("TWCC_PROJECT_NAME")
 
-    client = TWCCClient(api_key, project_id)
+    client = TWCCClient(api_key)
 
-    sites = client.get_sites()
+    project_id = client.get_project_id(project_name)
+    print(f"Project ID: {project_id}")
+    print(f"Project Name: {project_name}")
+
+    sites = client.get_sites(project_id)
     print(f"Total sites (same as total container): {len(sites)}")
 
     gpu_utilization_per_user = {}
