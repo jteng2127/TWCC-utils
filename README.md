@@ -14,7 +14,7 @@ pip install -r requirements.txt
 
 ```bash
 # default to fetch 7 days
-python fetch_gpu_util.py && python check_gpu_util.py
+python fetch_gpu_util.py && python check_gpu_idle.py
 ```
 
 ## Easily create TWCC container

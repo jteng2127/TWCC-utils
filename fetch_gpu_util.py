@@ -41,7 +41,7 @@ class TWCCClient:
         request = requests.Request(method, url, params=params, data=data, json=json)
         prepared = self.session.prepare_request(request)
 
-        print(f"[CURL]\n{curlify.to_curl(prepared)}\n")
+        # print(f"[CURL]\n{curlify.to_curl(prepared)}\n")
 
         response = self.session.send(prepared)
         response.raise_for_status()
